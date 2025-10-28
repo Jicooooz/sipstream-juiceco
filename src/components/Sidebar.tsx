@@ -2,17 +2,20 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, User, History, Info, ShoppingCart, Code, Mail, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
-  { icon: History, label: "Company History", href: "#history" },
-  { icon: Package, label: "About our Products", href: "#products" },
-  { icon: ShoppingCart, label: "Cart", href: "#cart" },
-  { icon: Info, label: "About the app", href: "#about" },
-  { icon: Code, label: "Developers", href: "#developers" },
-  { icon: Mail, label: "Contact Us", href: "#contact" },
+  { icon: History, label: "Company History", href: "/history" },
+  { icon: Package, label: "About our Products", href: "/" },
+  { icon: ShoppingCart, label: "Cart", href: "/cart" },
+  { icon: Info, label: "About the app", href: "/about" },
+  { icon: Code, label: "Developers", href: "/developers" },
+  { icon: Mail, label: "Contact Us", href: "/contact" },
 ];
 
 export const Sidebar = () => {
+  const location = useLocation();
+  
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -37,17 +40,24 @@ export const Sidebar = () => {
           
           <nav className="flex-1 p-4">
             <ul className="space-y-2">
-              {menuItems.map((item) => (
-                <li key={item.label}>
-                  <a
-                    href={item.href}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
-                  >
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.label}</span>
-                  </a>
-                </li>
-              ))}
+              {menuItems.map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <li key={item.label}>
+                    <Link
+                      to={item.href}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                        isActive 
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold" 
+                          : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      }`}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
         </div>
