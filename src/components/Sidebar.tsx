@@ -1,8 +1,10 @@
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, User, History, Info, ShoppingCart, Code, Mail, Package } from "lucide-react";
+import { Menu, User, History, Info, ShoppingCart, Code, Mail, Package, LogOut, LogIn, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Separator } from "@/components/ui/separator";
 
 const menuItems = [
   { icon: History, label: "Company History", href: "/history" },
@@ -11,11 +13,19 @@ const menuItems = [
   { icon: Info, label: "About the app", href: "/about" },
   { icon: Code, label: "Developers", href: "/developers" },
   { icon: Mail, label: "Contact Us", href: "/contact" },
+  { icon: Download, label: "Install App", href: "/install" },
 ];
 
 export const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -32,9 +42,18 @@ export const Sidebar = () => {
                 <User className="h-8 w-8" />
               </AvatarFallback>
             </Avatar>
-            <div>
-              <h3 className="font-semibold text-lg">John Doe</h3>
-              <p className="text-sm text-sidebar-foreground/70">+1 234 567 8900</p>
+            <div className="flex-1">
+              {user ? (
+                <>
+                  <h3 className="font-semibold text-lg">Welcome!</h3>
+                  <p className="text-sm text-sidebar-foreground/70 truncate">{user.email}</p>
+                </>
+              ) : (
+                <>
+                  <h3 className="font-semibold text-lg">Guest</h3>
+                  <p className="text-sm text-sidebar-foreground/70">Sign in to shop</p>
+                </>
+              )}
             </div>
           </div>
           
@@ -60,6 +79,28 @@ export const Sidebar = () => {
               })}
             </ul>
           </nav>
+
+          <div className="p-4 border-t border-sidebar-border">
+            {user ? (
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={handleSignOut}
+              >
+                <LogOut className="h-5 w-5 mr-3" />
+                Sign Out
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => navigate('/auth')}
+              >
+                <LogIn className="h-5 w-5 mr-3" />
+                Sign In
+              </Button>
+            )}
+          </div>
         </div>
       </SheetContent>
     </Sheet>
